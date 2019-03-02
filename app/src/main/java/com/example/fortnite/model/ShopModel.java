@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-public class ShopItem {
+public class ShopModel {
 
     @SerializedName("date_layout")
     @Expose
@@ -379,12 +379,6 @@ public class ShopItem {
         }
 
     }
-
-
-
-
-
-
 }
 
 

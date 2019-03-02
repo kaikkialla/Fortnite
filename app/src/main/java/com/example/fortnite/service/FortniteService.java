@@ -3,7 +3,9 @@ package com.example.fortnite.service;
 
 
 
-import com.example.fortnite.model.ShopItem;
+import com.example.fortnite.model.ShopModel;
+import com.example.fortnite.model.StatsModel;
+import com.example.fortnite.model.idModel;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
@@ -14,5 +16,11 @@ public interface FortniteService {
 
 
     @GET("store/get")
-    Call<ShopItem> getShop(@Query("language") String address);
+    Call<ShopModel> getShop(@Query("language") String language);
+
+    @GET("users/id")
+    Call<idModel> getID(@Query("username") String username);
+
+    @GET("users/public/br_stats_v2")
+    Call<StatsModel> getStats(@Query("user_id") String user_id, @Query("platform") String platform);
 }

@@ -3,6 +3,7 @@ package com.example.fortnite.fragments;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 import com.example.fortnite.R;
 import com.example.fortnite.model.idModel;
 import com.example.fortnite.repository.idRepository;
+import com.example.fortnite.utils.SearchViewObservable;
 import com.jakewharton.rxbinding3.appcompat.RxSearchView;
 
 import java.util.ArrayList;
@@ -25,7 +27,13 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import io.reactivex.ObservableSource;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
+import io.reactivex.functions.Predicate;
+import io.reactivex.schedulers.Schedulers;
 
 import static com.example.fortnite.MainActivity.BackgroundScreens;
 import static com.example.fortnite.MainActivity.sharedPreferences;
@@ -75,24 +83,23 @@ public class AccountsFragment extends Fragment {
         super.onResume();
         Presenter.setBackground();
 
-        mDisposable = io.reactivex.Observable.combineLatest(
-                RxSearchView.queryTextChanges(searchView).debounce(500, TimeUnit.MILLISECONDS),
-                idRepository.getInstance().getUser(name),
-                (CharSequence query,  idModel user) -> {
-                    return user;
-                }).observeOn(mainThread()).subscribe(user -> {
-                    List<idModel> accounts = new ArrayList<>();
-                    for(int i = 1; i <= user.getPlatforms().size() ; i++) {
-                        accounts.add(user);
-                    }
-
-                    adapter.swap(accounts);
-                    /*Показываем все аккаунты пользователя
-                        Создаем массив, заполняем его аккаунтами с разных платформ
-                        StatsRepository.getInstance().getStats(user.getUid(), user.getPlatforms().get(0)).observeOn(mainThread()).subscribe((StatsModel stats) -> );
-                     */
 
 
+
+        mDisposable = SearchViewObservable.fromView(searchView)
+                .debounce(300, TimeUnit.MILLISECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(result -> {
+                    idRepository.getInstance().getUser(result).observeOn(mainThread()).subscribe(user -> {
+                        List<idModel> accounts = new ArrayList<>();
+                        if(user.getPlatforms().size() != 0) {
+                            for (int i = 1; i <= user.getPlatforms().size(); i++) {
+                                accounts.add(user);
+                            }
+                            adapter.swap(accounts);
+                        }
+
+                    });
                 });
     }
 
@@ -141,8 +148,8 @@ public class AccountsFragment extends Fragment {
 
         public void setInfo(int pos, ViewHolder holder) {
             idModel account = mAccounts.get(pos);
-            String username = account.getUsername();
-            String platform = account.getPlatforms().get(pos);
+            String username = account.getUsername().toString();
+            String platform = account.getPlatforms().get(pos).toString();
 
 
             holder.username.setText(username);
@@ -168,9 +175,10 @@ public class AccountsFragment extends Fragment {
 
 
             holder.itemView.setOnClickListener(view -> {
+                Log.e("fmspifips", mAccounts.get(position).getUsername());
                 FragmentManager fragmentManager = getFragmentManager();
                 Fragment fragment = (Fragment) AccountInfoFragment.newInstanse(getUid(position), getPlatform(position));
-                fragmentManager.beginTransaction().replace(R.id.frame_layout, fragment).commit();
+                fragmentManager.beginTransaction().addToBackStack("account").replace(R.id.frame_layout, fragment).commit();
             });
 
         }

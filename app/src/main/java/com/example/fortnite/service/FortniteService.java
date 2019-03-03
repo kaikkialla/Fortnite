@@ -3,8 +3,10 @@ package com.example.fortnite.service;
 
 
 
+import com.example.fortnite.model.PsStatsModel;
 import com.example.fortnite.model.ShopModel;
-import com.example.fortnite.model.StatsModel;
+import com.example.fortnite.model.PcStatsModel;
+import com.example.fortnite.model.XboxStatsModel;
 import com.example.fortnite.model.idModel;
 
 import retrofit2.Call;
@@ -21,6 +23,13 @@ public interface FortniteService {
     @GET("users/id")
     Call<idModel> getID(@Query("username") String username);
 
+
     @GET("users/public/br_stats_v2")
-    Call<StatsModel> getStats(@Query("user_id") String user_id, @Query("platform") String platform);
+    Call<PcStatsModel> getPcStats(@Query("user_id") String user_id, @Query("platform") String platform);
+
+    @GET("users/public/br_stats_v2")
+    Call<PsStatsModel> getPsStats(@Query("user_id") String user_id, @Query("platform") String platform);
+
+    @GET("users/public/br_stats_v2")
+    Call<XboxStatsModel> getXboxStats(@Query("user_id") String user_id, @Query("platform") String platform);
 }

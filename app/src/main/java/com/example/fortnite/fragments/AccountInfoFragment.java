@@ -57,7 +57,16 @@ public class AccountInfoFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        Presenter.setText(uid, platform);
+
+
+        if(platform.equals("pc")) {
+            Presenter.loadPcStats(uid, platform);
+        }if(platform.equals("ps4")) {
+            Presenter.loadPsStats(uid, platform);
+        }if(platform.equals("xb1")) {
+            Presenter.loadXboxStats(uid, platform);
+        }
+
     }
 
 
@@ -71,10 +80,10 @@ public class AccountInfoFragment extends Fragment {
             return instance;
         }
 
-        @SuppressLint("CheckResult")
-        public static void setText(String uid, String platform) {
 
-            StatsRepository.getInstance().getStats(uid, platform).observeOn(mainThread()).subscribe(stats -> {
+        @SuppressLint("CheckResult")
+        public static void loadPcStats(String uid, String platform) {
+            StatsRepository.getInstance().getPcStats(uid, platform).observeOn(mainThread()).subscribe(stats -> {
                 StringBuilder sb = new StringBuilder();
                 DecimalFormat decimalFormat = new DecimalFormat("##");
 
@@ -115,6 +124,94 @@ public class AccountInfoFragment extends Fragment {
                 AccountInfoFragment.setStats(sb.toString());
             });
         }
+
+        @SuppressLint("CheckResult")
+        public static void loadPsStats(String uid, String platform) {
+            StatsRepository.getInstance().getPsStats(uid, platform).observeOn(mainThread()).subscribe(stats -> {
+                StringBuilder sb = new StringBuilder();
+                DecimalFormat decimalFormat = new DecimalFormat("##");
+
+                sb.append("platform -" + platform + "\n");
+                double Solokills = stats.getData().getGamepad().getDefaultsolo().getDefault().getKills();
+                double Duokills = stats.getData().getGamepad().getDefaultduo().getDefault().getKills();
+                double Squadkills = stats.getData().getGamepad().getDefaultsquad().getDefault().getKills();
+                double totalKills = Solokills + Duokills + Squadkills;
+
+
+                double soloMatches = stats.getData().getGamepad().getDefaultsolo().getDefault().getMatchesplayed();
+                double duoMatches = stats.getData().getGamepad().getDefaultduo().getDefault().getMatchesplayed();
+                double squadMatches = stats.getData().getGamepad().getDefaultsquad().getDefault().getMatchesplayed();
+                double totalMatches = soloMatches + duoMatches + squadMatches;
+                sb.append("solo kills -" + Solokills + "\n");
+                sb.append("duo kills -" + Duokills + "\n");
+                sb.append("squad kills -" + Squadkills + "\n");
+                sb.append("total kills -" + totalKills + "\n");
+
+                sb.append("solo matches played -" + soloMatches + "\n");
+                sb.append("duo matches played -" + duoMatches + "\n");
+                sb.append("squad  matches played -" + squadMatches + "\n");
+                sb.append("total matches played -" + totalMatches + "\n");
+
+
+                sb.append("solo kd -" + Solokills / soloMatches + "\n");
+                sb.append("duo kd -" + Duokills / duoMatches+ "\n");
+                sb.append("squad  kd -" + Squadkills / squadMatches + "\n");
+                sb.append("total kd -" + (totalKills / totalMatches )+ "\n");
+
+
+                /*
+                sb.append("solo kd -" + decimalFormat.format(Solokills / soloMatches) + "\n");
+                sb.append("duo kd -" + decimalFormat.format(Duokills / duoMatches) + "\n");
+                sb.append("squad  kd -" + decimalFormat.format(Squadkills / squadMatches)+ "\n");
+                sb.append("total kd -" + decimalFormat.format(totalKills / totalMatches )+ "\n");
+                 */
+                AccountInfoFragment.setStats(sb.toString());
+            });
+        }
+
+        @SuppressLint("CheckResult")
+        public static void loadXboxStats(String uid, String platform) {
+            StatsRepository.getInstance().getXboxStats(uid, platform).observeOn(mainThread()).subscribe(stats -> {
+                StringBuilder sb = new StringBuilder();
+                DecimalFormat decimalFormat = new DecimalFormat("##");
+
+                sb.append("platform -" + platform + "\n");
+                double Solokills = stats.getData().getGamepad().getDefaultsolo().getDefault().getKills();
+                double Duokills = stats.getData().getGamepad().getDefaultduo().getDefault().getKills();
+                double Squadkills = stats.getData().getGamepad().getDefaultsquad().getDefault().getKills();
+                double totalKills = Solokills + Duokills + Squadkills;
+
+
+                double soloMatches = stats.getData().getGamepad().getDefaultsolo().getDefault().getMatchesplayed();
+                double duoMatches = stats.getData().getGamepad().getDefaultduo().getDefault().getMatchesplayed();
+                double squadMatches = stats.getData().getGamepad().getDefaultsquad().getDefault().getMatchesplayed();
+                double totalMatches = soloMatches + duoMatches + squadMatches;
+                sb.append("solo kills -" + Solokills + "\n");
+                sb.append("duo kills -" + Duokills + "\n");
+                sb.append("squad kills -" + Squadkills + "\n");
+                sb.append("total kills -" + totalKills + "\n");
+
+                sb.append("solo matches played -" + soloMatches + "\n");
+                sb.append("duo matches played -" + duoMatches + "\n");
+                sb.append("squad  matches played -" + squadMatches + "\n");
+                sb.append("total matches played -" + totalMatches + "\n");
+
+
+                sb.append("solo kd -" + Solokills / soloMatches + "\n");
+                sb.append("duo kd -" + Duokills / duoMatches+ "\n");
+                sb.append("squad  kd -" + Squadkills / squadMatches + "\n");
+                sb.append("total kd -" + (totalKills / totalMatches )+ "\n");
+
+
+                /*
+                sb.append("solo kd -" + decimalFormat.format(Solokills / soloMatches) + "\n");
+                sb.append("duo kd -" + decimalFormat.format(Duokills / duoMatches) + "\n");
+                sb.append("squad  kd -" + decimalFormat.format(Squadkills / squadMatches)+ "\n");
+                sb.append("total kd -" + decimalFormat.format(totalKills / totalMatches )+ "\n");
+                 */
+                AccountInfoFragment.setStats(sb.toString());
+            });
+        }
     }
 }
 
@@ -124,13 +221,13 @@ public class AccountInfoFragment extends Fragment {
 /*
 
 Сделать разные статистики для пк и консолей, добавить их в StatsModel
-
-
 if(platform.equals("pc")) {
 
-}if(platform.equals("ps4")) {
+            }if(platform.equals("ps4")) {
 
-}if(platform.equals("xb1")) {
+            }if(platform.equals("xb1")) {
 
-}
+            }
+
+
 */

@@ -97,6 +97,7 @@ public class AccountsFragment extends Fragment {
                                 accounts.add(user);
                             }
                             adapter.swap(accounts);
+                            recyclerView.setAdapter(adapter);
                         }
 
                     });

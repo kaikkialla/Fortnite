@@ -7,6 +7,12 @@
     <TextView
         android:id="@+id/tv"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="fmosfgnosfsfafa"/>
+        android:layout_height="wrap_content"
+        android:text="Your stats are being loaded"/>
+
+    <TextView
+        android:id="@+id/testTv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Your test stats are being loaded aswell"/>
 </LinearLayout>

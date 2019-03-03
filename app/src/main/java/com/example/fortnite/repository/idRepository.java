@@ -35,7 +35,10 @@ public class idRepository {
         Service.getInstance().getID(username).enqueue(new Callback<idModel>() {
             @Override
             public void onResponse(Call<idModel> call, Response<idModel> response) {
-                user.onNext(response.body());
+                if(response.body().getUid() != null) {
+                    user.onNext(response.body());
+                }
+
             }
 
             @Override

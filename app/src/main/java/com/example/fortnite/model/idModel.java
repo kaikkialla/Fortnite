@@ -53,4 +53,76 @@ public class idModel {
         this.seasons = seasons;
     }
 
+
+
+    public class Error {
+
+        @SerializedName("error")
+        @Expose
+        private Boolean error;
+        @SerializedName("errorCode")
+        @Expose
+        private String errorCode;
+        @SerializedName("errorMessage")
+        @Expose
+        private String errorMessage;
+        @SerializedName("numericErrorCode")
+        @Expose
+        private String numericErrorCode;
+        @SerializedName("originatingService")
+        @Expose
+        private String originatingService;
+        @SerializedName("intent")
+        @Expose
+        private String intent;
+
+        public Boolean getError() {
+            return error;
+        }
+
+        public void setError(Boolean error) {
+            this.error = error;
+        }
+
+        public String getErrorCode() {
+            return errorCode;
+        }
+
+        public void setErrorCode(String errorCode) {
+            this.errorCode = errorCode;
+        }
+
+        public String getErrorMessage() {
+            return errorMessage;
+        }
+
+        public void setErrorMessage(String errorMessage) {
+            this.errorMessage = errorMessage;
+        }
+
+        public String getNumericErrorCode() {
+            return numericErrorCode;
+        }
+
+        public void setNumericErrorCode(String numericErrorCode) {
+            this.numericErrorCode = numericErrorCode;
+        }
+
+        public String getOriginatingService() {
+            return originatingService;
+        }
+
+        public void setOriginatingService(String originatingService) {
+            this.originatingService = originatingService;
+        }
+
+        public String getIntent() {
+            return intent;
+        }
+
+        public void setIntent(String intent) {
+            this.intent = intent;
+        }
+
+    }
 }

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="header_size">20sp</dimen>
+    <dimen name="header_value_size">18sp</dimen>
+    <dimen name="definition_size">16dp</dimen>
+    <dimen name="value_size">14dp</dimen>
+</resources>

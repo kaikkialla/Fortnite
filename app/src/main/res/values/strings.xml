@@ -3,4 +3,12 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="solo">Одиночный</string>
+    <string name="duo">Парный</string>
+    <string name="squads">Отряды</string>
+
+    <string name="kills">Убийства</string>
+    <string name="wins">Победы</string>
+    <string name="kd">У/С</string>
 </resources>

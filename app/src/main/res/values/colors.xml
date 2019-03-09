@@ -4,13 +4,21 @@
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
 
-    <color name="colorOrange">#ffb200</color>
-    <color name="colorGreen">#54ff00</color>
-    <color name="colorWhite">#efeae1</color>
 
 
-    <color name="text">#c9c5c5</color>
-    <color name="bg">#70000000</color>
+    <color name="colorYellow">#ffd779</color>
+    <color name="colorGreen">#77efb5</color>
+    <color name="colorBlue">#394faf</color>
+    <!--<color name="text">#c9c5c5</color>-->
+    <!--<color name="bg">#70000000</color>-->
+
+    <color name="text">#000</color>
+    <color name="textLight">#444444</color>
+    <color name="textWhite">#fff</color>
+
+    <color name="bg">#fff</color>
+    <color name="bgLight">#eee</color>
+
 
 
 </resources>

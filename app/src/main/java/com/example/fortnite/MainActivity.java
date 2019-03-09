@@ -16,7 +16,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-    public static int[] Colors;
+    //public static int[] Colors;
 
     public static int[] BackgroundScreens = new int[] {
         R.drawable.fire_lord,
@@ -51,11 +51,12 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+        /*
         Colors = new int[]{
             getResources().getColor(R.color.colorWhite),
             getResources().getColor(R.color.colorGreen),
             getResources().getColor(R.color.colorOrange)};
-
+*/
 
         editor.putInt("image", (int) (Math.random() * BackgroundScreens.length));
         editor.apply();

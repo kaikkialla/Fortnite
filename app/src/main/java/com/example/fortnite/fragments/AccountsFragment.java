@@ -74,7 +74,7 @@ public class AccountsFragment extends Fragment {
     }
 
     public static void setBackground(int resid) {
-        bg.setImageResource(resid);
+        //bg.setImageResource(resid);
     }
 
 
@@ -87,7 +87,7 @@ public class AccountsFragment extends Fragment {
 
 
         mDisposable = SearchViewObservable.fromView(searchView)
-                .debounce(300, TimeUnit.MILLISECONDS)
+                .debounce(1, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(result -> {
                     idRepository.getInstance().getUser(result).observeOn(mainThread()).subscribe(user -> {

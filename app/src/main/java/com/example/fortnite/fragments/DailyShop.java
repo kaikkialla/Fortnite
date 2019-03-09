@@ -28,6 +28,7 @@ import io.reactivex.disposables.Disposable;
 
 import static com.example.fortnite.MainActivity.BackgroundScreens;
 import static com.example.fortnite.MainActivity.SCREEN_WIDTH_PX;
+import static com.example.fortnite.MainActivity.density;
 import static com.example.fortnite.MainActivity.sharedPreferences;
 import static com.example.fortnite.fragments.DailyShop.adapter;
 import static io.reactivex.android.schedulers.AndroidSchedulers.mainThread;
@@ -74,7 +75,7 @@ public class DailyShop extends Fragment {
     }
 
     public static void setBackground(int i) {
-        bg.setImageResource(i);
+        //bg.setImageResource(i);
     }
 }
 
@@ -117,7 +118,7 @@ class ShopAdapter extends RecyclerView.Adapter<ShopAdapter.ViewHolder> {
         ShopModel.Item item = mItems.get(pos);
         ShopModel.Item.Item_ item_ = item.getItem();
         ShopModel.Item.Item_.Images images = item_.getImages();
-        String bg = images.getBackground();
+        String bg = images.getTransparent();
 
         Glide.with(activity).load(bg).into(holder.mIcon);
         holder.mName.setText(item.getName());
@@ -136,13 +137,31 @@ class ShopAdapter extends RecyclerView.Adapter<ShopAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams((int) (SCREEN_WIDTH_PX - 8 * MainActivity.density) / 2, (int) (SCREEN_WIDTH_PX - 8 * MainActivity.density) / 2);
-        holder.mIcon.setLayoutParams(params);
+        LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams((int) (SCREEN_WIDTH_PX - 8 * MainActivity.density) / 2, (int) (SCREEN_WIDTH_PX - 8 * MainActivity.density) / 2);
+        holder.mIcon.setLayoutParams(params1);
         holder.mName.setSelected(true);
 
         if (mItems.size() != 0) {
             setInfo(position, holder);
         }
+
+
+        LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+
+
+        if(position == mItems.size() - 1 | position == mItems.size() - 2) {
+            if(position % 2 == 0) {
+                params2.setMargins(0,0,8,0);
+            } else params2.setMargins(0,0,0,0);
+        } else {
+            if(position % 2 == 0) {
+                params2.setMargins(0,0,8,8);
+            } else params2.setMargins(0,0,0,8);
+        }
+        holder.itemView.setLayoutParams(params2);
+
+
+
     }
 
 

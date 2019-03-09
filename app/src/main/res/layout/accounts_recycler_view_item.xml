@@ -8,11 +8,11 @@
         android:id="@+id/username"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="#FFF"/>
+        android:textColor="@color/text"/>
 
     <TextView
         android:id="@+id/platform"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="#FFF"/>
+        android:textColor="@color/text"/>
 </LinearLayout>

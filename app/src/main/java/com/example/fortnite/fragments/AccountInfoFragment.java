@@ -147,7 +147,7 @@ public class AccountInfoFragment extends Fragment {
         }
 
 
-
+/*
         @SuppressLint("CheckResult")
         public static void loadPcStats(String uid) {
             StatsRepository.getInstance().getStats(uid).observeOn(mainThread()).subscribe((StatsModel stats) -> {
@@ -168,18 +168,18 @@ public class AccountInfoFragment extends Fragment {
                 int soloWins = stats.getData().getKeyboardmouse().getDefaultsolo().getDefault().getPlacetop1();
                 int duoWins = stats.getData().getKeyboardmouse().getDefaultduo().getDefault().getPlacetop1();
                 int squadsWins = stats.getData().getKeyboardmouse().getDefaultsquad().getDefault().getPlacetop1();
-/*
+
                 int solokd = solokills / (soloMatches - soloWins);
                 int duokd = duokills / (duoMatches - duoWins);
                 int squadskd = squadkills / (squadMatches - squadsWins);
-*/
+
                 AccountInfoFragment.setStats(name, id, soloMatches, solokills, soloWins,0,
                         duoMatches, duokills, duoWins, 0,
                         squadMatches, squadkills, squadsWins, 0);
             });
         }
-
-
+*/
+/*
         @SuppressLint("CheckResult")
         public static void loadConsoleStats(String uid) {
             StatsRepository.getInstance().getStats(uid).observeOn(mainThread()).subscribe((StatsModel stats) -> {
@@ -200,15 +200,60 @@ public class AccountInfoFragment extends Fragment {
                 int soloWins = stats.getData().getGamepad().getDefaultsolo().getDefault().getPlacetop1();
                 int duoWins = stats.getData().getGamepad().getDefaultduo().getDefault().getPlacetop1();
                 int squadsWins = stats.getData().getGamepad().getDefaultsquad().getDefault().getPlacetop1();
-/*
+
                 int solokd = solokills / (soloMatches - soloWins);
                 int duokd = duokills / (duoMatches - duoWins);
                 int squadskd = squadkills / (squadMatches - squadsWins);
-*/
+
                 AccountInfoFragment.setStats(name, id, soloMatches, solokills, soloWins, 0,
                         duoMatches, duokills, duoWins, 0,
                         squadMatches, squadkills, squadsWins, 0);
             });
         }
-    }
+
+    */
+
+        enum DeviceType {
+            GAMEPAD, KEYBOARD_MOUSE
+        }
+
+        @SuppressLint("CheckResult")
+        public static void loadStats(String uid, DeviceType deviceType) {
+            StatsRepository.getInstance().getStats(uid).observeOn(mainThread()).subscribe((StatsModel stats) -> {
+                DecimalFormat decimalFormat = new DecimalFormat("##");
+
+                String name = stats.getEpicName();
+                String id = stats.getAccountId();
+
+                StatsModel.Device device = null;
+                if (deviceType == DeviceType.GAMEPAD) {
+                    device = stats.getData().getGamepad();
+                } else if (deviceType == DeviceType.KEYBOARD_MOUSE) {
+                    device = stats.getData().getKeyboardmouse();
+                }
+
+                    int solokills = device.getDefaultsolo().getDefault().getKills();
+                    int duokills = device.getDefaultduo().getDefault().getKills();
+                    int squadkills = device.getDefaultsquad().getDefault().getKills();
+
+                    int soloMatches = device.getDefaultsolo().getDefault().getMatchesplayed();
+                    int duoMatches = device.getDefaultduo().getDefault().getMatchesplayed();
+                    int squadMatches = device.getDefaultsquad().getDefault().getMatchesplayed();
+
+                    int soloWins = device.getDefaultsolo().getDefault().getPlacetop1();
+                    int duoWins = device.getDefaultduo().getDefault().getPlacetop1();
+                    int squadsWins = device.getDefaultsquad().getDefault().getPlacetop1();
+
+                    double solokd = (double) solokills / (soloMatches - soloWins);
+                    int duokd = duokills / (duoMatches - duoWins);
+                    int squadskd = squadkills / (squadMatches - squadsWins);
+
+                    AccountInfoFragment.setStats(name, id, soloMatches, solokills, soloWins, 0,
+                            duoMatches, duokills, duoWins, 0,
+                            squadMatches, squadkills, squadsWins, 0);
+                }
+            });
+        }
+   }
+
 }

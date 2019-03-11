@@ -340,24 +340,24 @@ public class StatsModel {
 
         @SerializedName("keyboardmouse")
         @Expose
-        private Keyboardmouse keyboardmouse;
+        private Device keyboardmouse;
         @SerializedName("gamepad")
         @Expose
-        private Gamepad gamepad;
+        private Device gamepad;
 
-        public Keyboardmouse getKeyboardmouse() {
+        public Device getKeyboardmouse() {
             return keyboardmouse;
         }
 
-        public void setKeyboardmouse(Keyboardmouse keyboardmouse) {
+        public void setKeyboardmouse(Device keyboardmouse) {
             this.keyboardmouse = keyboardmouse;
         }
 
-        public Gamepad getGamepad() {
+        public Device getGamepad() {
             return gamepad;
         }
 
-        public void setGamepad(Gamepad gamepad) {
+        public void setGamepad(Device gamepad) {
             this.gamepad = gamepad;
         }
 
@@ -3069,7 +3069,7 @@ public class StatsModel {
 
     }
 
-
+/*
     public class Gamepad {
         @SerializedName("vamp")
         @Expose
@@ -3447,7 +3447,7 @@ public class StatsModel {
         }
 
     }
-
+*/
 
 
 
@@ -3540,7 +3540,7 @@ public class StatsModel {
 
 
 
-    public class Keyboardmouse {
+    public class Device {
 
         @SerializedName("defaultduo")
         @Expose

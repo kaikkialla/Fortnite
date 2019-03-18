@@ -7,15 +7,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.fortnite.R;
 import com.example.fortnite.model.StatsModel;
 import com.example.fortnite.repository.StatsRepository;
-
-import org.w3c.dom.Text;
-
-import java.text.DecimalFormat;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -27,7 +22,7 @@ public class AccountInfoFragment extends Fragment {
 
 
     public static String uid;
-    public static String platform;
+    public static Presenter.DeviceType platform;
 
     static TextView mname;
     static TextView mid;
@@ -48,8 +43,7 @@ public class AccountInfoFragment extends Fragment {
     static TextView msquads_kd;
 
 
-
-    public static AccountInfoFragment newInstanse(String uid, String platform) {
+    public static AccountInfoFragment newInstanse(String uid, Presenter.DeviceType platform) {
         AccountInfoFragment fragment = new AccountInfoFragment();
         AccountInfoFragment.uid = uid;
         AccountInfoFragment.platform = platform;
@@ -82,32 +76,40 @@ public class AccountInfoFragment extends Fragment {
         msquads_kills = view.findViewById(R.id.squads_kills);
         msquads_wins = view.findViewById(R.id.squads_wins);
         msquads_kd = view.findViewById(R.id.squads_kd);
-
     }
 
-    public static void setStats(String name,String id,
-                                int solo_matches, int solo_kills, int solo_wins, int solo_kd,
-                                int duo_matches, int duo_kills, int duo_wins, int duo_kd,
-                                int squads_matches, int squads_kills, int squads_wins, int squads_kd) {
 
-        mname.setText(name);
-        mid.setText(id);
+    public static void setStats(StatsModel statsModel, StatsModel.Device device) {
+        int solokills = device.getDefaultsolo().getDefault().getKills();
+        int duokills = device.getDefaultduo().getDefault().getKills();
+        int squadkills = device.getDefaultsquad().getDefault().getKills();
 
-        msolo_matches.setText(matchesFormatter(solo_matches));
-        msolo_kills.setText(String.valueOf(solo_kills));
-        msolo_wins.setText(String.valueOf(solo_wins));
-        msolo_kd.setText(String.valueOf(solo_kd));
+        int solomatches = device.getDefaultsolo().getDefault().getMatchesplayed();
+        int duomatches = device.getDefaultduo().getDefault().getMatchesplayed();
+        int squadmatches = device.getDefaultsquad().getDefault().getMatchesplayed();
 
-        mduo_matches.setText(matchesFormatter(duo_matches));
-        mduo_kills.setText(String.valueOf(duo_kills));
-        mduo_wins.setText(String.valueOf(duo_wins));
-        mduo_kd.setText(String.valueOf(duo_kd));
+        int solowins = device.getDefaultsolo().getDefault().getPlacetop1();
+        int duowins = device.getDefaultduo().getDefault().getPlacetop1();
+        int squadwins = device.getDefaultsquad().getDefault().getPlacetop1();
 
-        msquads_matches.setText(matchesFormatter(squads_matches));
-        msquads_kills.setText(String.valueOf(squads_kills));
-        msquads_wins.setText(String.valueOf(squads_wins));
-        msquads_kd.setText(String.valueOf(squads_kd));
 
+        mname.setText(statsModel.getEpicName());
+        mid.setText(statsModel.getAccountId());
+
+        msolo_matches.setText(matchesFormatter(solomatches));
+        msolo_kills.setText(String.valueOf(solokills));
+        msolo_wins.setText(String.valueOf(solowins));
+        //msolo_kd.setText(String.valueOf(solokd));
+
+        mduo_matches.setText(matchesFormatter(duomatches));
+        mduo_kills.setText(String.valueOf(duokills));
+        mduo_wins.setText(String.valueOf(duowins));
+        //mduo_kd.setText(String.valueOf(duo_kd));
+
+        msquads_matches.setText(matchesFormatter(squadmatches));
+        msquads_kills.setText(String.valueOf(squadkills));
+        msquads_wins.setText(String.valueOf(squadwins));
+        //msquads_kd.setText(String.valueOf(squadkd));
     }
 
     public static String matchesFormatter(int i) {
@@ -115,7 +117,7 @@ public class AccountInfoFragment extends Fragment {
         int last = Integer.parseInt(String.valueOf(matches.charAt(matches.length() - 1)));
 
         String formatted = "";
-        if(last == 1) {
+        if (last == 1) {
             formatted = i + " матч";
             Log.e("gmsgs", formatted);
         } else if (last >= 2 && last <= 4) {
@@ -132,7 +134,7 @@ public class AccountInfoFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        Presenter.loadPcStats(uid);
+        Presenter.loadStats(uid, platform);
     }
 
 
@@ -147,113 +149,61 @@ public class AccountInfoFragment extends Fragment {
         }
 
 
-/*
-        @SuppressLint("CheckResult")
-        public static void loadPcStats(String uid) {
-            StatsRepository.getInstance().getStats(uid).observeOn(mainThread()).subscribe((StatsModel stats) -> {
-                DecimalFormat decimalFormat = new DecimalFormat("##");
-
-                //String name = stats.getEpicName().toUpperCase();
-                String name = stats.getEpicName();
-                String id = stats.getAccountId();
-
-                int solokills = stats.getData().getKeyboardmouse().getDefaultsolo().getDefault().getKills();
-                int duokills = stats.getData().getKeyboardmouse().getDefaultduo().getDefault().getKills();
-                int squadkills = stats.getData().getKeyboardmouse().getDefaultsquad().getDefault().getKills();
-
-                int soloMatches = stats.getData().getKeyboardmouse().getDefaultsolo().getDefault().getMatchesplayed();
-                int duoMatches = stats.getData().getKeyboardmouse().getDefaultduo().getDefault().getMatchesplayed();
-                int squadMatches = stats.getData().getKeyboardmouse().getDefaultsquad().getDefault().getMatchesplayed();
-
-                int soloWins = stats.getData().getKeyboardmouse().getDefaultsolo().getDefault().getPlacetop1();
-                int duoWins = stats.getData().getKeyboardmouse().getDefaultduo().getDefault().getPlacetop1();
-                int squadsWins = stats.getData().getKeyboardmouse().getDefaultsquad().getDefault().getPlacetop1();
-
-                int solokd = solokills / (soloMatches - soloWins);
-                int duokd = duokills / (duoMatches - duoWins);
-                int squadskd = squadkills / (squadMatches - squadsWins);
-
-                AccountInfoFragment.setStats(name, id, soloMatches, solokills, soloWins,0,
-                        duoMatches, duokills, duoWins, 0,
-                        squadMatches, squadkills, squadsWins, 0);
-            });
-        }
-*/
-/*
-        @SuppressLint("CheckResult")
-        public static void loadConsoleStats(String uid) {
-            StatsRepository.getInstance().getStats(uid).observeOn(mainThread()).subscribe((StatsModel stats) -> {
-                DecimalFormat decimalFormat = new DecimalFormat("##");
-
-                //String name = stats.getEpicName().toUpperCase();
-                String name = stats.getEpicName();
-                String id = stats.getAccountId();
-
-                int solokills = stats.getData().getGamepad().getDefaultsolo().getDefault().getKills();
-                int duokills = stats.getData().getGamepad().getDefaultduo().getDefault().getKills();
-                int squadkills = stats.getData().getGamepad().getDefaultsquad().getDefault().getKills();
-
-                int soloMatches = stats.getData().getGamepad().getDefaultsolo().getDefault().getMatchesplayed();
-                int duoMatches = stats.getData().getGamepad().getDefaultduo().getDefault().getMatchesplayed();
-                int squadMatches = stats.getData().getGamepad().getDefaultsquad().getDefault().getMatchesplayed();
-
-                int soloWins = stats.getData().getGamepad().getDefaultsolo().getDefault().getPlacetop1();
-                int duoWins = stats.getData().getGamepad().getDefaultduo().getDefault().getPlacetop1();
-                int squadsWins = stats.getData().getGamepad().getDefaultsquad().getDefault().getPlacetop1();
-
-                int solokd = solokills / (soloMatches - soloWins);
-                int duokd = duokills / (duoMatches - duoWins);
-                int squadskd = squadkills / (squadMatches - squadsWins);
-
-                AccountInfoFragment.setStats(name, id, soloMatches, solokills, soloWins, 0,
-                        duoMatches, duokills, duoWins, 0,
-                        squadMatches, squadkills, squadsWins, 0);
-            });
-        }
-
-    */
-
-        enum DeviceType {
+        public static enum DeviceType {
             GAMEPAD, KEYBOARD_MOUSE
         }
 
         @SuppressLint("CheckResult")
         public static void loadStats(String uid, DeviceType deviceType) {
             StatsRepository.getInstance().getStats(uid).observeOn(mainThread()).subscribe((StatsModel stats) -> {
-                DecimalFormat decimalFormat = new DecimalFormat("##");
 
                 String name = stats.getEpicName();
                 String id = stats.getAccountId();
 
+                StatsModel statsModel = new StatsModel();
                 StatsModel.Device device = null;
+
                 if (deviceType == DeviceType.GAMEPAD) {
                     device = stats.getData().getGamepad();
                 } else if (deviceType == DeviceType.KEYBOARD_MOUSE) {
                     device = stats.getData().getKeyboardmouse();
                 }
 
-                    int solokills = device.getDefaultsolo().getDefault().getKills();
-                    int duokills = device.getDefaultduo().getDefault().getKills();
-                    int squadkills = device.getDefaultsquad().getDefault().getKills();
+                int solokills = device.getDefaultsolo().getDefault().getKills();
+                int duokills = device.getDefaultduo().getDefault().getKills();
+                int squadkills = device.getDefaultsquad().getDefault().getKills();
 
-                    int soloMatches = device.getDefaultsolo().getDefault().getMatchesplayed();
-                    int duoMatches = device.getDefaultduo().getDefault().getMatchesplayed();
-                    int squadMatches = device.getDefaultsquad().getDefault().getMatchesplayed();
+                int solomatches = device.getDefaultsolo().getDefault().getMatchesplayed();
+                int duomatches = device.getDefaultduo().getDefault().getMatchesplayed();
+                int squadmatches = device.getDefaultsquad().getDefault().getMatchesplayed();
 
-                    int soloWins = device.getDefaultsolo().getDefault().getPlacetop1();
-                    int duoWins = device.getDefaultduo().getDefault().getPlacetop1();
-                    int squadsWins = device.getDefaultsquad().getDefault().getPlacetop1();
+                int solowins = device.getDefaultsolo().getDefault().getPlacetop1();
+                int duowins = device.getDefaultduo().getDefault().getPlacetop1();
+                int squadwins = device.getDefaultsquad().getDefault().getPlacetop1();
 
-                    double solokd = (double) solokills / (soloMatches - soloWins);
-                    int duokd = duokills / (duoMatches - duoWins);
-                    int squadskd = squadkills / (squadMatches - squadsWins);
+                //double solokd = (double) solokills / (soloMatches - soloWins);
+                //int duokd = duokills / (duoMatches - duoWins);
+                //int squadskd = squadkills / (squadMatches - squadsWins);
 
-                    AccountInfoFragment.setStats(name, id, soloMatches, solokills, soloWins, 0,
-                            duoMatches, duokills, duoWins, 0,
-                            squadMatches, squadkills, squadsWins, 0);
-                }
+
+                stats.setAccountId(id);
+                stats.setEpicName(name);
+                device.getDefaultsolo().getDefault().setKills(solokills);
+                device.getDefaultduo().getDefault().setKills(duokills);
+                device.getDefaultsquad().getDefault().setKills(squadkills);
+
+                device.getDefaultsolo().getDefault().setMatchesplayed(solomatches);
+                device.getDefaultduo().getDefault().setMatchesplayed(duomatches);
+                device.getDefaultsquad().getDefault().setMatchesplayed(squadmatches);
+
+                device.getDefaultsolo().getDefault().setPlacetop1(solowins);
+                device.getDefaultduo().getDefault().setPlacetop1(duowins);
+                device.getDefaultsquad().getDefault().setPlacetop1(squadwins);
+
+
+                AccountInfoFragment.setStats(statsModel, device);
             });
         }
-   }
-
+    }
 }
+

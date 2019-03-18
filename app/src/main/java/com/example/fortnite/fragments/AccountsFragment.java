@@ -14,7 +14,6 @@ import com.example.fortnite.R;
 import com.example.fortnite.model.idModel;
 import com.example.fortnite.repository.idRepository;
 import com.example.fortnite.utils.SearchViewObservable;
-import com.jakewharton.rxbinding3.appcompat.RxSearchView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,13 +26,8 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import io.reactivex.ObservableSource;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
-import io.reactivex.functions.Function;
-import io.reactivex.functions.Predicate;
-import io.reactivex.schedulers.Schedulers;
 
 import static com.example.fortnite.MainActivity.BackgroundScreens;
 import static com.example.fortnite.MainActivity.sharedPreferences;
@@ -49,7 +43,6 @@ public class AccountsFragment extends Fragment {
     public static Adapter adapter;
 
 
-    public static final String name = "100pingfeqide";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -178,7 +171,13 @@ public class AccountsFragment extends Fragment {
             holder.itemView.setOnClickListener(view -> {
                 Log.e("fmspifips", mAccounts.get(position).getUsername());
                 FragmentManager fragmentManager = getFragmentManager();
-                Fragment fragment = (Fragment) AccountInfoFragment.newInstanse(getUid(position), getPlatform(position));
+                AccountInfoFragment.Presenter.DeviceType deviceType = null;
+                if(getPlatform(position).equals("pc")) {
+                    deviceType = AccountInfoFragment.Presenter.DeviceType.KEYBOARD_MOUSE;
+                } else if(getPlatform(position).equals("ps4") || getPlatform(position).equals("xbox1")) {
+                    deviceType = AccountInfoFragment.Presenter.DeviceType.GAMEPAD;
+                }
+                Fragment fragment = (Fragment) AccountInfoFragment.newInstanse(getUid(position), deviceType);
                 fragmentManager.beginTransaction().addToBackStack("account").replace(R.id.frame_layout, fragment).commit();
             });
 

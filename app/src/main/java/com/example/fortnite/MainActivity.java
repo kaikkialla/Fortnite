@@ -5,10 +5,7 @@ import android.content.pm.ActivityInfo;
 import android.preference.PreferenceManager;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
-
-
 import com.example.fortnite.fragments.Menu;
-
 import androidx.appcompat.app.AppCompatActivity;
 
 

@@ -1,10 +1,33 @@
 package com.example.fortnite.model;
 
 
+/**
+* Выдает ошибку Cannot figure out how to save this field into database. You can consider adding a type converter for it.
+* в строчках
+*   private Object youtube;
+*   private Item_ item;
+*   private Ratings ratings;
+*/
+
+
+
+
+import com.google.gson.Gson;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.google.gson.reflect.TypeToken;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.lang.reflect.Type;
+import java.util.Collections;
 import java.util.List;
+
+import androidx.annotation.NonNull;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+import androidx.room.TypeConverter;
+import androidx.room.TypeConverters;
 
 public class ShopModel {
 
@@ -28,13 +51,14 @@ public class ShopModel {
     private String vbucks;
 
 
-    /**
-     * Массив эл-тов
-     */
+
     @SerializedName("items")
     @Expose
     private List<Item> items = null;
 
+    public List<Item> getItems() {
+        return items;
+    }
 
     public String getDateLayout() {
         return dateLayout;
@@ -84,9 +108,6 @@ public class ShopModel {
         this.vbucks = vbucks;
     }
 
-    public List<Item> getItems() {
-        return items;
-    }
 
     public void setItems(List<Item> items) {
         this.items = items;
@@ -100,11 +121,11 @@ public class ShopModel {
 
 
 
-
+    @Entity(tableName = "tx")
     public class Item {
 
-        @SerializedName("itemid")
-        @Expose
+        @NonNull @PrimaryKey
+        @SerializedName("itemid") @Expose
         private String itemid;
         @SerializedName("name")
         @Expose
@@ -121,21 +142,23 @@ public class ShopModel {
         @SerializedName("lastupdate")
         @Expose
         private Integer lastupdate;
-        @SerializedName("youtube")
-        @Expose
-        private Object youtube;
+//        @SerializedName("youtube")
+//        @Expose
+//        private Object youtube;
+
         @SerializedName("item")
         @Expose
+        @TypeConverters(DateConverter.class)
         private Item_ item;
-        @SerializedName("ratings")
-        @Expose
-        private Ratings ratings;
+//        @SerializedName("ratings")
+//        @Expose
+//        private Ratings ratings;
 
         public String getItemid() {
             return itemid;
         }
 
-        public void setItemid(String itemid) {
+        public void setItemid(@NotNull String itemid) {
             this.itemid = itemid;
         }
 
@@ -179,13 +202,13 @@ public class ShopModel {
             this.lastupdate = lastupdate;
         }
 
-        public Object getYoutube() {
-            return youtube;
-        }
-
-        public void setYoutube(Object youtube) {
-            this.youtube = youtube;
-        }
+//        public Object getYoutube() {
+//            return youtube;
+//        }
+//
+//        public void setYoutube(Object youtube) {
+//            this.youtube = youtube;
+//        }
 
         public Item_ getItem() {
             return item;
@@ -195,13 +218,13 @@ public class ShopModel {
             this.item = item;
         }
 
-        public Ratings getRatings() {
-            return ratings;
-        }
-
-        public void setRatings(Ratings ratings) {
-            this.ratings = ratings;
-        }
+//        public Ratings getRatings() {
+//            return ratings;
+//        }
+//
+//        public void setRatings(Ratings ratings) {
+//            this.ratings = ratings;
+//        }
 
         public class Item_ {
 
@@ -338,6 +361,22 @@ public class ShopModel {
                 }
 
             }
+        }
+    }
+
+
+
+    public class DateConverter {
+
+        @TypeConverter
+        public List<Item.Item_> toCountryLangList(String countryLangString) {
+            if (countryLangString == null) {
+                return (null);
+            }
+            Gson gson = new Gson();
+            Type type = new TypeToken<List<Item.Item_>>() {}.getType();
+            List<Item.Item_> countryLangList = gson.fromJson(countryLangString, type);
+            return countryLangList;
         }
     }
 

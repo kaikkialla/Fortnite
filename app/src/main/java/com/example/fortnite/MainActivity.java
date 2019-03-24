@@ -5,7 +5,11 @@ import android.content.pm.ActivityInfo;
 import android.preference.PreferenceManager;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+
+
 import com.example.fortnite.fragments.Menu;
+import com.example.fortnite.repository.ShopRepository;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 
@@ -41,6 +45,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
+
+        //ShopRepository.getInstance().initialize(getApplicationContext());
+
+
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.clear();
@@ -48,12 +56,12 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-        /*
-        Colors = new int[]{
-            getResources().getColor(R.color.colorWhite),
-            getResources().getColor(R.color.colorGreen),
-            getResources().getColor(R.color.colorOrange)};
-*/
+
+//        Colors = new int[]{
+//            getResources().getColor(R.color.colorWhite),
+//            getResources().getColor(R.color.colorGreen),
+//            getResources().getColor(R.color.colorOrange)};
+
 
         editor.putInt("image", (int) (Math.random() * BackgroundScreens.length));
         editor.apply();

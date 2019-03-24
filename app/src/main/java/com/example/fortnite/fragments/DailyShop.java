@@ -22,6 +22,10 @@ import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import io.reactivex.disposables.Disposable;
@@ -40,6 +44,7 @@ public class DailyShop extends Fragment {
     static RecyclerView recyclerView;
     public static ShopAdapter adapter;
     Disposable mDisposable;
+    viewModel mViewModel;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -50,6 +55,9 @@ public class DailyShop extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        mViewModel = ViewModelProviders.of(this).get(viewModel.class);
+
         adapter = new ShopAdapter(getActivity());
         bg = view.findViewById(R.id.bg);
         recyclerView = view.findViewById(R.id.recyclerView);
@@ -61,9 +69,10 @@ public class DailyShop extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        Presenter.getInstance().setBackground();
-        mDisposable = ShopRepository.getInstance().getTransactions().observeOn(mainThread()).subscribe(transactions -> {
-            adapter.swap(transactions);
+        //Presenter.getInstance().setBackground();
+        mViewModel.getTransactions(null).observe(getActivity(), items -> {
+            // когда получили транзакции - обновляем список
+            adapter.swap(items);
         });
     }
 
@@ -71,7 +80,10 @@ public class DailyShop extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        mDisposable.dispose();
+        if (mDisposable != null) {
+            mDisposable.dispose();
+            mDisposable = null;
+        }
     }
 
     public static void setBackground(int i) {
@@ -98,6 +110,38 @@ class Presenter {
         DailyShop.setBackground(image);
     }
 }
+
+    class viewModel extends ViewModel{
+        private MutableLiveData<List<ShopModel.Item>> items = new MutableLiveData<>();
+        private String query;
+        private Disposable mDisposable;
+
+        public LiveData<List<ShopModel.Item>> getTransactions(String query) {
+            this.query = query; // сохраняем поисковый запрос (чтобы потом отфильтровать)
+            subscribeTransactions(query); // подписываем на транзакции (если ещё не)
+            return items;
+        }
+
+        private void subscribeTransactions(String query) {
+            if (mDisposable != null) { // если уже подписались
+                mDisposable.dispose(); // отписываемся
+            }
+            // переподписываемся на все транзакции
+            mDisposable = ShopRepository.getInstance().getTransactions()
+                    .subscribe(transactions -> {
+                        // когда они приходят, фильтруем
+                        final List<ShopModel.Item> filteredTransactions = new ArrayList<>();
+                        for (ShopModel.Item transaction : transactions) {
+                            if (transaction.getName().contains(query)) {
+                                filteredTransactions.add(transaction);
+                            }
+                        }
+                        // и кладём в контейнер
+                        this.items.setValue(filteredTransactions);
+                    });
+        }
+    }
+
 
 
 class ShopAdapter extends RecyclerView.Adapter<ShopAdapter.ViewHolder> {

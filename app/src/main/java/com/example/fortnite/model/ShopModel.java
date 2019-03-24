@@ -31,6 +31,27 @@ import androidx.room.TypeConverters;
 
 public class ShopModel {
 
+
+
+    //Не работает, прописан аннотацией в ShopDatabase и у самой переменной
+    public class ItemConverter {
+
+        @TypeConverter
+        public List<Item.Item_> toCountryLangList(String countryLangString) {
+            if (countryLangString == null) {
+                return (null);
+            }
+            Gson gson = new Gson();
+            Type type = new TypeToken<List<Item.Item_>>() {}.getType();
+            List<Item.Item_> countryLangList = gson.fromJson(countryLangString, type);
+            return countryLangList;
+        }
+    }
+
+
+
+
+
     @SerializedName("date_layout")
     @Expose
     private String dateLayout;
@@ -148,7 +169,7 @@ public class ShopModel {
 
         @SerializedName("item")
         @Expose
-        @TypeConverters(DateConverter.class)
+        @TypeConverters(ItemConverter.class)
         private Item_ item;
 //        @SerializedName("ratings")
 //        @Expose
@@ -366,19 +387,6 @@ public class ShopModel {
 
 
 
-    public class DateConverter {
-
-        @TypeConverter
-        public List<Item.Item_> toCountryLangList(String countryLangString) {
-            if (countryLangString == null) {
-                return (null);
-            }
-            Gson gson = new Gson();
-            Type type = new TypeToken<List<Item.Item_>>() {}.getType();
-            List<Item.Item_> countryLangList = gson.fromJson(countryLangString, type);
-            return countryLangList;
-        }
-    }
 
 
     public class Ratings {

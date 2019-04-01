@@ -10,6 +10,10 @@ package com.example.fortnite.model;
 */
 
 
+/*
+Сделать другой класс с полями, в который записать данные из этого
+ */
+
 
 
 import com.google.gson.Gson;
@@ -26,27 +30,9 @@ import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
-import androidx.room.TypeConverter;
-import androidx.room.TypeConverters;
 
 public class ShopModel {
 
-
-
-    //Не работает, прописан аннотацией в ShopDatabase и у самой переменной
-    public class ItemConverter {
-
-        @TypeConverter
-        public List<Item.Item_> toCountryLangList(String countryLangString) {
-            if (countryLangString == null) {
-                return (null);
-            }
-            Gson gson = new Gson();
-            Type type = new TypeToken<List<Item.Item_>>() {}.getType();
-            List<Item.Item_> countryLangList = gson.fromJson(countryLangString, type);
-            return countryLangList;
-        }
-    }
 
 
 
@@ -75,7 +61,7 @@ public class ShopModel {
 
     @SerializedName("items")
     @Expose
-    private List<Item> items = null;
+    public List<Item> items = null;
 
     public List<Item> getItems() {
         return items;
@@ -136,16 +122,8 @@ public class ShopModel {
 
 
 
-
-
-
-
-
-
-    @Entity(tableName = "tx")
     public class Item {
 
-        @NonNull @PrimaryKey
         @SerializedName("itemid") @Expose
         private String itemid;
         @SerializedName("name")
@@ -169,7 +147,6 @@ public class ShopModel {
 
         @SerializedName("item")
         @Expose
-        @TypeConverters(ItemConverter.class)
         private Item_ item;
 //        @SerializedName("ratings")
 //        @Expose

@@ -149,7 +149,7 @@ public class AccountInfoFragment extends Fragment {
         }
 
 
-        public static enum DeviceType {
+        public enum DeviceType {
             GAMEPAD, KEYBOARD_MOUSE
         }
 

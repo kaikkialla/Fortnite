@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.example.fortnite.MainActivity;
 import com.example.fortnite.R;
+import com.example.fortnite.model.RoomModel;
 import com.example.fortnite.model.ShopModel;
 import com.example.fortnite.repository.ShopRepository;
 
@@ -112,11 +113,11 @@ class Presenter {
 }
 
     class viewModel extends ViewModel{
-        private MutableLiveData<List<ShopModel.Item>> items = new MutableLiveData<>();
+        private MutableLiveData<List<RoomModel.Item>> items = new MutableLiveData<>();
         private String query;
         private Disposable mDisposable;
 
-        public LiveData<List<ShopModel.Item>> getTransactions(String query) {
+        public LiveData<List<RoomModel.Item>> getTransactions(String query) {
             this.query = query; // сохраняем поисковый запрос (чтобы потом отфильтровать)
             subscribeTransactions(query); // подписываем на транзакции (если ещё не)
             return items;
@@ -130,8 +131,8 @@ class Presenter {
             mDisposable = ShopRepository.getInstance().getTransactions()
                     .subscribe(transactions -> {
                         // когда они приходят, фильтруем
-                        final List<ShopModel.Item> filteredTransactions = new ArrayList<>();
-                        for (ShopModel.Item transaction : transactions) {
+                        final List<RoomModel.Item> filteredTransactions = new ArrayList<>();
+                        for (RoomModel.Item transaction : transactions) {
                             if (transaction.getName().contains(query)) {
                                 filteredTransactions.add(transaction);
                             }
@@ -145,7 +146,7 @@ class Presenter {
 
 
 class ShopAdapter extends RecyclerView.Adapter<ShopAdapter.ViewHolder> {
-    public List<ShopModel.Item> mItems = new ArrayList<>();
+    public List<RoomModel.Item> mItems = new ArrayList<>();
     Activity activity;
 
 
@@ -153,17 +154,17 @@ class ShopAdapter extends RecyclerView.Adapter<ShopAdapter.ViewHolder> {
         this.activity = activity;
     }
 
-    public void swap(List<ShopModel.Item> items) {
+    public void swap(List<RoomModel.Item> items) {
         mItems = items;
         adapter.notifyDataSetChanged();
     }
 
     public void setInfo(int pos, ViewHolder holder) {
-        ShopModel.Item item = mItems.get(pos);
-        ShopModel.Item.Item_ item_ = item.getItem();
-        ShopModel.Item.Item_.Images images = item_.getImages();
-        String bg = images.getTransparent();
-
+        RoomModel.Item item = mItems.get(pos);
+//        ShopModel.Item.Item_ item_ = item.getItem();
+//        ShopModel.Item.Item_.Images images = item_.getImages();
+//        String bg = images.getTransparent();
+        String bg = item.getImage();
         Glide.with(activity).load(bg).into(holder.mIcon);
         holder.mName.setText(item.getName());
         holder.mPrice.setText(String.valueOf(item.getCost()));

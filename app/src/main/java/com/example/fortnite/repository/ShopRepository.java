@@ -1,6 +1,7 @@
 package com.example.fortnite.repository;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.example.fortnite.Executor;
 import com.example.fortnite.database.ShopDao;
@@ -46,8 +47,9 @@ public class ShopRepository {
                     public void onResponse(Call<ShopModel> call, Response<ShopModel> response) {
                         if (response.isSuccessful() && response.body().getItems() != null) { // если запрос успешен
                             //items.onNext(response.body().getItems());
-                            items.onNext(updatedModel(response.body().getItems()));
-                            saveTransactions((ArrayList) response.body().getItems());
+                            List<RoomModel.Item> newItems = updatedModel(response.body().getItems());
+                            items.onNext(newItems);
+                            saveTransactions((ArrayList<RoomModel.Item>) newItems);
                         } else {}
                     }
                     @Override
@@ -106,7 +108,7 @@ public class ShopRepository {
             mShopDao.deleteAll();
             mShopDao.insert(itemlist);
             return true;
-        }).subscribeOn(Schedulers.io()).subscribe();
+        }).subscribeOn(Schedulers.io()).subscribe(ignore -> {}, e -> Log.e("TEST", "", e));
 
 //        new AsyncTask<String, Integer, Void>() {
 //            @Override

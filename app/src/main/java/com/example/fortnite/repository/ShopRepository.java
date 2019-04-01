@@ -68,22 +68,21 @@ public class ShopRepository {
 
 
     private List<RoomModel.Item> updatedModel(List<ShopModel.Item> list) {
-//        for(int pos = 0; pos <= list.size() - 1; pos++) {
-//            ShopModel.Item oldItem = list.get(pos);
-//            RoomModel.Item item = new RoomModel.Item();
-//
-//            item.setItemid(oldItem.getItemid());
-//            item.setCost(oldItem.getCost());
-//            item.setImage(oldItem.getItem().getImage());
-//            item.setName(oldItem.getName());
-//            item.setRarity(oldItem.getItem().getRarity());
-//            item.setType(oldItem.getItem().getType());
-//
-//            //RoomModel.getItems().add(item);
-//            RoomModel.getItems().add(item);
-//        }
-//        return RoomModel.getItems();
-        return new ArrayList<>();
+        final List<RoomModel.Item> roomItems = new ArrayList<>();
+        for(int pos = 0; pos <= list.size() - 1; pos++) {
+            ShopModel.Item oldItem = list.get(pos);
+            RoomModel.Item item = new RoomModel.Item();
+
+            item.setItemid(oldItem.getItemid());
+            item.setCost(oldItem.getCost());
+            item.setImage(oldItem.getItem().getImage());
+            item.setName(oldItem.getName());
+            item.setRarity(oldItem.getItem().getRarity());
+            item.setType(oldItem.getItem().getType());
+
+            roomItems.add(item);
+        }
+        return roomItems;
     }
 
 

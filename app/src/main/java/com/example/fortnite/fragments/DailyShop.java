@@ -14,7 +14,6 @@ import com.bumptech.glide.Glide;
 import com.example.fortnite.MainActivity;
 import com.example.fortnite.R;
 import com.example.fortnite.model.RoomModel;
-import com.example.fortnite.model.ShopModel;
 import com.example.fortnite.repository.ShopRepository;
 
 import java.util.ArrayList;
@@ -31,12 +30,8 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import io.reactivex.disposables.Disposable;
 
-import static com.example.fortnite.MainActivity.BackgroundScreens;
 import static com.example.fortnite.MainActivity.SCREEN_WIDTH_PX;
-import static com.example.fortnite.MainActivity.density;
-import static com.example.fortnite.MainActivity.sharedPreferences;
 import static com.example.fortnite.fragments.DailyShop.adapter;
-import static io.reactivex.android.schedulers.AndroidSchedulers.mainThread;
 
 
 public class DailyShop extends Fragment {
@@ -45,7 +40,11 @@ public class DailyShop extends Fragment {
     static RecyclerView recyclerView;
     public static ShopAdapter adapter;
     Disposable mDisposable;
-    viewModel mViewModel;
+    public viewmodel mViewModel;
+
+
+
+    public DailyShop() {}
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -57,7 +56,7 @@ public class DailyShop extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mViewModel = ViewModelProviders.of(this).get(viewModel.class);
+        mViewModel  = ViewModelProviders.of(this).get(viewmodel.class);
 
         adapter = new ShopAdapter(getActivity());
         bg = view.findViewById(R.id.bg);
@@ -90,34 +89,16 @@ public class DailyShop extends Fragment {
     public static void setBackground(int i) {
         //bg.setImageResource(i);
     }
-}
 
 
 
-class Presenter {
-
-    public static Presenter instance;
-
-    public static Presenter getInstance() {
-        if (instance == null) {
-            instance = new Presenter();
-        }
-        return instance;
-    }
-
-    public void setBackground() {
-        int id = sharedPreferences.getInt("image", 0);
-        int image = BackgroundScreens[id];
-        DailyShop.setBackground(image);
-    }
-}
-
-    class viewModel extends ViewModel{
+    public class viewmodel extends ViewModel{
         private MutableLiveData<List<RoomModel.Item>> items = new MutableLiveData<>();
         private String query;
         private Disposable mDisposable;
 
-        public LiveData<List<RoomModel.Item>> getTransactions(String query) {
+
+        LiveData<List<RoomModel.Item>> getTransactions(String query) {
             this.query = query; // сохраняем поисковый запрос (чтобы потом отфильтровать)
             subscribeTransactions(query); // подписываем на транзакции (если ещё не)
             return items;
@@ -145,77 +126,81 @@ class Presenter {
 
 
 
-class ShopAdapter extends RecyclerView.Adapter<ShopAdapter.ViewHolder> {
-    public List<RoomModel.Item> mItems = new ArrayList<>();
-    Activity activity;
+
+    public class ShopAdapter extends RecyclerView.Adapter<ViewHolder> {
+        public List<RoomModel.Item> mItems = new ArrayList<>();
+        Activity activity;
 
 
-    public ShopAdapter(Activity activity) {
-        this.activity = activity;
-    }
+        public ShopAdapter(Activity activity) {
+            this.activity = activity;
+        }
 
-    public void swap(List<RoomModel.Item> items) {
-        mItems = items;
-        adapter.notifyDataSetChanged();
-    }
+        public void swap(List<RoomModel.Item> items) {
+            mItems = items;
+            adapter.notifyDataSetChanged();
+        }
 
-    public void setInfo(int pos, ViewHolder holder) {
-        RoomModel.Item item = mItems.get(pos);
+        public void setInfo(int pos, ViewHolder holder) {
+            RoomModel.Item item = mItems.get(pos);
 //        ShopModel.Item.Item_ item_ = item.getItem();
 //        ShopModel.Item.Item_.Images images = item_.getImages();
 //        String bg = images.getTransparent();
-        String bg = item.getImage();
-        Glide.with(activity).load(bg).into(holder.mIcon);
-        holder.mName.setText(item.getName());
-        holder.mPrice.setText(String.valueOf(item.getCost()));
-    }
+            String bg = item.getImage();
+            Glide.with(activity).load(bg).into(holder.mIcon);
+            holder.mName.setText(item.getName());
+            holder.mPrice.setText(String.valueOf(item.getCost()));
+        }
 
-    @NonNull
-    @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        LayoutInflater inflater = LayoutInflater.from(activity);
-        View v = inflater.inflate(R.layout.shop_recycler_view_item, parent, false );
-        ViewHolder vh = new ViewHolder(v);
-        return vh;
-    }
-
-
-    @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams((int) (SCREEN_WIDTH_PX - 8 * MainActivity.density) / 2, (int) (SCREEN_WIDTH_PX - 8 * MainActivity.density) / 2);
-        holder.mIcon.setLayoutParams(params1);
-        holder.mName.setSelected(true);
-
-        if (mItems.size() != 0) {
-            setInfo(position, holder);
+        @NonNull
+        @Override
+        public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            LayoutInflater inflater = LayoutInflater.from(activity);
+            View v = inflater.inflate(R.layout.shop_recycler_view_item, parent, false );
+            ViewHolder vh = new ViewHolder(v);
+            return vh;
         }
 
 
-        LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        @Override
+        public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+            LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams((int) (SCREEN_WIDTH_PX - 8 * MainActivity.density) / 2, (int) (SCREEN_WIDTH_PX - 8 * MainActivity.density) / 2);
+            holder.mIcon.setLayoutParams(params1);
+            holder.mName.setSelected(true);
+
+            if (mItems.size() != 0) {
+                setInfo(position, holder);
+            }
 
 
-        if(position == mItems.size() - 1 | position == mItems.size() - 2) {
-            if(position % 2 == 0) {
-                params2.setMargins(0,0,8,0);
-            } else params2.setMargins(0,0,0,0);
-        } else {
-            if(position % 2 == 0) {
-                params2.setMargins(0,0,8,8);
-            } else params2.setMargins(0,0,0,8);
+            LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+
+
+            if(position == mItems.size() - 1 | position == mItems.size() - 2) {
+                if(position % 2 == 0) {
+                    params2.setMargins(0,0,8,0);
+                } else params2.setMargins(0,0,0,0);
+            } else {
+                if(position % 2 == 0) {
+                    params2.setMargins(0,0,8,8);
+                } else params2.setMargins(0,0,0,8);
+            }
+            holder.itemView.setLayoutParams(params2);
+
+
+
         }
-        holder.itemView.setLayoutParams(params2);
+
+
+        @Override
+        public int getItemCount() {
+            return mItems.size();
+        }
+
 
 
 
     }
-
-
-    @Override
-    public int getItemCount() {
-        return mItems.size();
-    }
-
-
 
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -235,7 +220,29 @@ class ShopAdapter extends RecyclerView.Adapter<ShopAdapter.ViewHolder> {
             mPrice = view.findViewById(R.id.price);
         }
     }
+
+
 }
+
+
+
+//class Presenter {
+//
+//    public static Presenter instance;
+//
+//    public static Presenter getInstance() {
+//        if (instance == null) {
+//            instance = new Presenter();
+//        }
+//        return instance;
+//    }
+//
+//    public void setBackground() {
+//        int id = sharedPreferences.getInt("image", 0);
+//        int image = BackgroundScreens[id];
+//        DailyShop.setBackground(image);
+//    }
+//}
 
 
 

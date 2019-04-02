@@ -1,4 +1,4 @@
-package com.example.fortnite.fragments;
+package com.example.fortnite.fragments.dailyShop;
 
 
 import android.app.Activity;
@@ -13,8 +13,8 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.example.fortnite.MainActivity;
 import com.example.fortnite.R;
+import com.example.fortnite.fragments.dailyShop.viewmodel;
 import com.example.fortnite.model.RoomModel;
-import com.example.fortnite.repository.ShopRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,16 +22,12 @@ import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import io.reactivex.disposables.Disposable;
 
 import static com.example.fortnite.MainActivity.SCREEN_WIDTH_PX;
-import static com.example.fortnite.fragments.DailyShop.adapter;
 
 
 public class DailyShop extends Fragment {
@@ -70,7 +66,7 @@ public class DailyShop extends Fragment {
     public void onResume() {
         super.onResume();
         //Presenter.getInstance().setBackground();
-        mViewModel.getTransactions(null).observe(getActivity(), items -> {
+        mViewModel.getTransactions("").observe(getActivity(), items -> {
             // когда получили транзакции - обновляем список
             adapter.swap(items);
         });
@@ -92,37 +88,6 @@ public class DailyShop extends Fragment {
 
 
 
-    public class viewmodel extends ViewModel{
-        private MutableLiveData<List<RoomModel.Item>> items = new MutableLiveData<>();
-        private String query;
-        private Disposable mDisposable;
-
-
-        LiveData<List<RoomModel.Item>> getTransactions(String query) {
-            this.query = query; // сохраняем поисковый запрос (чтобы потом отфильтровать)
-            subscribeTransactions(query); // подписываем на транзакции (если ещё не)
-            return items;
-        }
-
-        private void subscribeTransactions(String query) {
-            if (mDisposable != null) { // если уже подписались
-                mDisposable.dispose(); // отписываемся
-            }
-            // переподписываемся на все транзакции
-            mDisposable = ShopRepository.getInstance().getTransactions()
-                    .subscribe(transactions -> {
-                        // когда они приходят, фильтруем
-                        final List<RoomModel.Item> filteredTransactions = new ArrayList<>();
-                        for (RoomModel.Item transaction : transactions) {
-                            if (transaction.getName().contains(query)) {
-                                filteredTransactions.add(transaction);
-                            }
-                        }
-                        // и кладём в контейнер
-                        this.items.setValue(filteredTransactions);
-                    });
-        }
-    }
 
 
 

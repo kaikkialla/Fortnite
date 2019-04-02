@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.fortnite.R;
+import com.example.fortnite.fragments.dailyShop.DailyShop;
 import com.google.android.material.snackbar.Snackbar;
 
 import androidx.annotation.NonNull;
